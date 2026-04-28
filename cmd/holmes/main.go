@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -209,8 +208,6 @@ func countLines(text string) int {
 }
 
 func runEvidence(command, status string, details map[string]any) {
-	fs := flag.NewFlagSet(command, flag.ContinueOnError)
-	_ = fs
 	printJSON(evidence{
 		Tool:      "holmes",
 		Version:   version,
