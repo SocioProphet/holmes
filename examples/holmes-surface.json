@@ -1,0 +1,50 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "HolmesSurface",
+  "metadata": {
+    "name": "holmes-core",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "product": "Holmes",
+    "tagline": "Watson-style systems answer. Holmes investigates.",
+    "components": [
+      "sherlock-search",
+      "221b",
+      "mycroft-router",
+      "moriarty-bench",
+      "irene-shield",
+      "the-canon",
+      "deduction-engine"
+    ],
+    "methodFamilies": [
+      "language.primitive.v1/Analyze",
+      "language.entity.v1/Extract",
+      "language.relation.v1/Extract",
+      "language.classify.v1/Classify",
+      "language.embed.v1/Embed",
+      "language.rerank.v1/Rerank",
+      "language.translate.v1/Translate",
+      "language.summarize.v1/Summarize",
+      "language.rag.v1/Answer",
+      "language.graph.v1/ToSemanticGraph",
+      "language.govern.v1/Evaluate"
+    ],
+    "requiredPromotionEvidence": [
+      "corpusRef",
+      "pipelineOrModelRef",
+      "evalRecord",
+      "guardrailPolicy",
+      "evidenceReceipt",
+      "promotionRecord",
+      "rollbackRef"
+    ],
+    "integrations": {
+      "standards": "SocioProphet/functional-model-surfaces",
+      "platform": "SocioProphet/prophet-platform",
+      "search": "SocioProphet/sherlock-search",
+      "lab": "SociOS-Linux/nlplab",
+      "sourceosCarry": "SourceOS-Linux/sourceos-model-carry"
+    }
+  }
+}

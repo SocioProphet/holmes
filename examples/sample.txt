@@ -1,0 +1,4 @@
+Holmes investigates evidence-first language workflows.
+Sherlock Search provides discovery and retrieval.
+The Canon records provenance.
+Deduction Engine assembles claims, contradictions, and casefile outputs.
