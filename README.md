@@ -40,6 +40,12 @@ Holmes supports Slash Topics by producing governed topic-model training artifact
 
 For Slash Topics, Holmes emits or prepares topic seeds, positive/negative/adjacent/ambiguous boundary evidence, candidate labels, topic taxonomy candidates, eval slices, and replayable topic-pack generation receipts. Slash Topics owns `/topic` pack semantics and policy membranes; Holmes owns language evidence, candidate generation, model-training support, and promotion evidence required before a topic model or topic pack can become stable.
 
+## Proof-claim reasoning role
+
+Holmes reasoning-layer ownership is bounded to claim `Propose -> Explain -> Verify` contracts. Holmes emits `Claim` candidates plus `ExplanationTrace`, optional `ProofCertificate`, and `ContradictionReport` artifacts for downstream policy evaluation. Holmes does not make policy admission decisions.
+
+Reference: [`docs/PROOF_CLAIM_CONTRACT.md`](docs/PROOF_CLAIM_CONTRACT.md)
+
 ## NLP component alignment
 
 Holmes explicitly covers these component families:
@@ -65,6 +71,15 @@ Normative cross-surface standards live in `SocioProphet/functional-model-surface
 Runtime service deployment should graduate into `SocioProphet/prophet-platform` when contracts and smoke tests are stable.
 Linux-native NLP lab execution belongs in `SociOS-Linux/nlplab`.
 SourceOS carries clients and signed service references through `SourceOS-Linux/sourceos-model-carry`.
+
+## Contract responsibility catalog
+
+- Holmes: proof-claim reasoning contracts and verification/explanation artifacts.
+- Sherlock: retrieval and evidence discovery used as inputs to reasoning.
+- Slash Topics: governed `/topic` pack semantics, topic membranes, and topic-model surfaces trained from Holmes evidence artifacts.
+- GAIA: graph/world grounding inputs consumed by Holmes reasoning adapters.
+- Agentplane: governed execution after policy outcomes are decided.
+- Policy Fabric: admission decisioning after Holmes evidence, proof, contradiction, and training artifacts are produced.
 
 ## Initial validation
 
