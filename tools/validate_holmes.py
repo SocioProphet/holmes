@@ -50,6 +50,9 @@ REQUIRED_NLP_TASKS = {
     "category-classification",
     "concept-linking",
     "topic-modeling",
+    "topic-model-training",
+    "topic-taxonomy-induction",
+    "topic-pack-generation",
     "topical-clustering",
     "text-similarity",
     "table-header-identification",
@@ -58,6 +61,10 @@ REQUIRED_NLP_TASKS = {
     "semantic-graph-conversion",
     "evidence-governance",
 }
+REQUIRED_METHOD_FAMILIES = {
+    "language.topic.v1/Propose",
+    "language.topic.v1/Train",
+}
 REQUIRED_EVIDENCE = {
     "corpusRef",
     "pipelineOrModelRef",
@@ -65,6 +72,7 @@ REQUIRED_EVIDENCE = {
     "taskContract",
     "evalRecord",
     "latencyFootprintRecord",
+    "slashTopicsTrainingRef",
     "guardrailPolicy",
     "evidenceReceipt",
     "promotionRecord",
@@ -98,13 +106,14 @@ def main() -> int:
         ("components", REQUIRED_COMPONENTS),
         ("componentFamilies", REQUIRED_COMPONENT_FAMILIES),
         ("nlpTasks", REQUIRED_NLP_TASKS),
+        ("methodFamilies", REQUIRED_METHOD_FAMILIES),
         ("requiredPromotionEvidence", REQUIRED_EVIDENCE),
     ]:
         result = require_set(spec, field, required)
         if result is not None:
             return result
     integrations = spec.get("integrations", {})
-    for key in ["standards", "platform", "search", "lab", "sourceosCarry"]:
+    for key in ["standards", "platform", "search", "slashTopics", "lab", "sourceosCarry"]:
         if key not in integrations:
             return fail(f"missing integration: {key}")
     print("OK: Holmes contracts validated")
