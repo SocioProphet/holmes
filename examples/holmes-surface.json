@@ -51,6 +51,9 @@
       "category-classification",
       "concept-linking",
       "topic-modeling",
+      "topic-model-training",
+      "topic-taxonomy-induction",
+      "topic-pack-generation",
       "topical-clustering",
       "text-similarity",
       "table-header-identification",
@@ -69,6 +72,8 @@
       "language.translate.v1/Translate",
       "language.summarize.v1/Summarize",
       "language.rag.v1/Answer",
+      "language.topic.v1/Propose",
+      "language.topic.v1/Train",
       "language.graph.v1/ToSemanticGraph",
       "language.govern.v1/Evaluate"
     ],
@@ -79,6 +84,7 @@
       "taskContract",
       "evalRecord",
       "latencyFootprintRecord",
+      "slashTopicsTrainingRef",
       "guardrailPolicy",
       "evidenceReceipt",
       "promotionRecord",
@@ -88,6 +94,7 @@
       "standards": "SocioProphet/functional-model-surfaces",
       "platform": "SocioProphet/prophet-platform",
       "search": "SocioProphet/sherlock-search",
+      "slashTopics": "SocioProphet/slash-topics",
       "lab": "SociOS-Linux/nlplab",
       "sourceosCarry": "SourceOS-Linux/sourceos-model-carry"
     }
