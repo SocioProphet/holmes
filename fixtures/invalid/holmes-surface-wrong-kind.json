@@ -1,0 +1,24 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "NotHolmesSurface",
+  "metadata": {
+    "name": "bad-surface-wrong-kind",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "product": "Holmes",
+    "components": ["sherlock-search"],
+    "componentFamilies": ["basic-primitives"],
+    "nlpTasks": ["language-identification"],
+    "methodFamilies": ["language.topic.v1/Propose", "language.topic.v1/Train"],
+    "requiredPromotionEvidence": ["corpusRef", "pipelineOrModelRef", "algorithmFamily", "taskContract", "evalRecord", "latencyFootprintRecord", "slashTopicsTrainingRef", "guardrailPolicy", "evidenceReceipt", "promotionRecord", "rollbackRef"],
+    "integrations": {
+      "standards": "SocioProphet/functional-model-surfaces",
+      "platform": "SocioProphet/prophet-platform",
+      "search": "SocioProphet/sherlock-search",
+      "slashTopics": "SocioProphet/slash-topics",
+      "lab": "SociOS-Linux/nlplab",
+      "sourceosCarry": "SourceOS-Linux/sourceos-model-carry"
+    }
+  }
+}
