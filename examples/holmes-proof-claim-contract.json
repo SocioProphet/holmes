@@ -1,0 +1,163 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "HolmesReasoningContract",
+  "metadata": {
+    "name": "holmes-proof-claim-contract",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "canonicalLoop": [
+      "Observe",
+      "Anchor",
+      "Normalize",
+      "Propose",
+      "Explain",
+      "Verify",
+      "Govern",
+      "Act",
+      "Receipt",
+      "Learn"
+    ],
+    "holmesOwnedSegment": [
+      "Propose",
+      "Explain",
+      "Verify"
+    ],
+    "admissionInvariant": "VectorCandidate | ModelOutput | GraphCandidate -> ProposedClaim -> ExplanationTrace + ProofCertificate? + ContradictionReport",
+    "candidateOnlyStatus": "candidate_only",
+    "policyDecisions": [
+      "allow",
+      "deny",
+      "require_review",
+      "provisional"
+    ],
+    "contractMappings": {
+      "Claim": "ontogenesis.socioprophet.dev/v1/Claim",
+      "ProofCertificate": "ontogenesis.socioprophet.dev/v1/ProofCertificate",
+      "ExplanationTrace": "ontogenesis.socioprophet.dev/v1/ExplanationTrace",
+      "ContradictionReport": "ontogenesis.socioprophet.dev/v1/ContradictionReport",
+      "TruthBounds": "ontogenesis.socioprophet.dev/v1/TruthBounds"
+    },
+    "workedExamples": {
+      "documentSpanToPolicyReadyClaim": {
+        "input": {
+          "sourceRef": "doc://platform-rfc/compute/section-2",
+          "spanRef": "doc://platform-rfc/compute/section-2#char=121-262",
+          "proposerType": "ModelOutput"
+        },
+        "proposedClaim": {
+          "claimId": "claim-platform-kernel-hardening",
+          "type": "platform.security.posture",
+          "text": "Platform kernel hardening is enabled by default on all production clusters.",
+          "status": "candidate_only",
+          "truthBoundsNote": "Bounds are illustrative for reference-fixture calibration only; they demonstrate candidate confidence interval semantics, not admission.",
+          "truthBounds": {
+            "lower": 0.61,
+            "upper": 0.82,
+            "method": "calibrated_estimate"
+          }
+        },
+        "explanationTrace": {
+          "traceId": "exp-001",
+          "steps": [
+            "Extracted assertion span from technical document",
+            "Mapped assertion to canonical platform security claim template",
+            "Matched evidence references to claim predicates"
+          ],
+          "evidenceRefs": [
+            "evidence://doc/platform-rfc/section-2",
+            "evidence://graph/platform-controls/kernel-hardening"
+          ]
+        },
+        "reasoningTrace": [
+          {
+            "ruleName": "rule.platform.security.default_control",
+            "premises": [
+              "technical_doc_asserts_default=true",
+              "control_type=kernel_hardening"
+            ],
+            "conclusion": "claim.platform.security.posture.default_enabled",
+            "evidenceRefs": [
+              "evidence://doc/platform-rfc/section-2",
+              "evidence://graph/platform-controls/kernel-hardening"
+            ],
+            "confidence": 0.74,
+            "truthBounds": {
+              "lower": 0.61,
+              "upper": 0.82,
+              "method": "calibrated_estimate"
+            }
+          }
+        ],
+        "contradictionReport": {
+          "reportId": "contra-001",
+          "status": "contradiction_detected",
+          "conflicts": [
+            {
+              "sourceRef": "doc://runbook-exceptions/kernel-hardening",
+              "statement": "Legacy clusters may disable kernel hardening by exception.",
+              "severity": "medium"
+            }
+          ]
+        },
+        "proofCertificate": {
+          "certificateId": "proof-001",
+          "verificationMethod": "rule+evidence-check",
+          "verificationStatus": "insufficient_for_admission",
+          "evidenceRefs": [
+            "evidence://doc/platform-rfc/section-2",
+            "evidence://graph/platform-controls/kernel-hardening"
+          ]
+        },
+        "policyReadyClaim": {
+          "claimId": "claim-platform-kernel-hardening",
+          "admissionStatus": "pending_policy_decision",
+          "eligiblePolicyDecisions": [
+            "allow",
+            "deny",
+            "require_review",
+            "provisional"
+          ]
+        }
+      },
+      "vectorCandidateVerificationPath": {
+        "input": {
+          "vectorCandidate": {
+            "candidateId": "vec-9001",
+            "embeddingRef": "vec://sherlock/chunk/9001",
+            "nearestText": "Kernel hardening appears enabled on cluster class A.",
+            "similarity": 0.88
+          }
+        },
+        "candidateClaim": {
+          "claimId": "claim-vector-kernel-hardening",
+          "type": "platform.security.posture",
+          "text": "Kernel hardening is enabled by default in production.",
+          "status": "candidate_only",
+          "truthBoundsNote": "Vector-symbolic candidate uses intentionally lower confidence bounds until proof/evidence verification.",
+          "truthBounds": {
+            "lower": 0.36,
+            "upper": 0.59,
+            "method": "vector-symbolic-prior"
+          }
+        },
+        "verificationPath": {
+          "textualEntailment": "not_entailed",
+          "proofCertificate": null,
+          "contradictionReport": {
+            "reportId": "contra-vec-001",
+            "status": "unsupported_candidate",
+            "conflicts": [
+              {
+                "sourceRef": "doc://controls/production-baseline",
+                "statement": "No default guarantee found for all production clusters.",
+                "severity": "high"
+              }
+            ]
+          },
+          "result": "rejected_before_policy"
+        }
+      }
+    }
+  }
+}

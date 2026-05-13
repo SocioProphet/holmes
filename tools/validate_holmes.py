@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE = ROOT / "examples" / "holmes-surface.json"
+REASONING_EXAMPLE = ROOT / "examples" / "holmes-proof-claim-contract.json"
 REQUIRED_COMPONENTS = {
     "sherlock-search",
     "221b",
@@ -78,6 +79,23 @@ REQUIRED_EVIDENCE = {
     "promotionRecord",
     "rollbackRef",
 }
+REQUIRED_MAPPINGS = {
+    "Claim",
+    "ProofCertificate",
+    "ExplanationTrace",
+    "ContradictionReport",
+    "TruthBounds",
+}
+REQUIRED_HOLMES_SEGMENT = ["Propose", "Explain", "Verify"]
+REJECTED_BEFORE_POLICY = "rejected_before_policy"
+REQUIRED_REASONING_TRACE = {
+    "ruleName",
+    "premises",
+    "conclusion",
+    "evidenceRefs",
+    "confidence",
+    "truthBounds",
+}
 
 
 def fail(message: str) -> int:
@@ -93,7 +111,7 @@ def require_set(spec: dict, field: str, required: set[str]) -> int | None:
     return None
 
 
-def main() -> int:
+def validate_surface() -> int | None:
     if not EXAMPLE.exists():
         return fail("missing examples/holmes-surface.json")
     data = json.loads(EXAMPLE.read_text())
@@ -116,6 +134,57 @@ def main() -> int:
     for key in ["standards", "platform", "search", "slashTopics", "lab", "sourceosCarry"]:
         if key not in integrations:
             return fail(f"missing integration: {key}")
+    return None
+
+
+def validate_reasoning_contract() -> int | None:
+    if not REASONING_EXAMPLE.exists():
+        return fail("missing examples/holmes-proof-claim-contract.json")
+    reasoning = json.loads(REASONING_EXAMPLE.read_text())
+    if reasoning.get("apiVersion") != "holmes.socioprophet.dev/v1":
+        return fail("wrong reasoning contract apiVersion")
+    if reasoning.get("kind") != "HolmesReasoningContract":
+        return fail("wrong reasoning contract kind")
+    reasoning_spec = reasoning.get("spec", {})
+    if reasoning_spec.get("candidateOnlyStatus") != "candidate_only":
+        return fail("candidateOnlyStatus must be candidate_only")
+    actual_segment = reasoning_spec.get("holmesOwnedSegment", [])
+    if actual_segment != REQUIRED_HOLMES_SEGMENT:
+        return fail(
+            "holmesOwnedSegment must be ordered exactly as [Propose, Explain, Verify]; "
+            f"got {actual_segment}"
+        )
+    mappings = set(reasoning_spec.get("contractMappings", {}).keys())
+    missing_mappings = REQUIRED_MAPPINGS - mappings
+    if missing_mappings:
+        return fail(f"missing contract mappings: {sorted(missing_mappings)}")
+    worked_examples = reasoning_spec.get("workedExamples", {})
+    for key in ["documentSpanToPolicyReadyClaim", "vectorCandidateVerificationPath"]:
+        if key not in worked_examples:
+            return fail(f"missing worked example: {key}")
+    doc_example = worked_examples["documentSpanToPolicyReadyClaim"]
+    reasoning_trace = doc_example.get("reasoningTrace", [])
+    if not reasoning_trace:
+        return fail("documentSpanToPolicyReadyClaim must include reasoningTrace")
+    for index, entry in enumerate(reasoning_trace):
+        missing_reasoning_fields = REQUIRED_REASONING_TRACE - set(entry.keys())
+        if missing_reasoning_fields:
+            return fail(
+                f"missing reasoningTrace fields at index {index}: {sorted(missing_reasoning_fields)}"
+            )
+    vector_example = worked_examples["vectorCandidateVerificationPath"]
+    if vector_example.get("candidateClaim", {}).get("status") != "candidate_only":
+        return fail("vector candidateClaim status must be candidate_only")
+    if vector_example.get("verificationPath", {}).get("result") != REJECTED_BEFORE_POLICY:
+        return fail("vector verification path result must be rejected_before_policy")
+    return None
+
+
+def main() -> int:
+    for validator in [validate_surface, validate_reasoning_contract]:
+        result = validator()
+        if result is not None:
+            return result
     print("OK: Holmes contracts validated")
     return 0
 
