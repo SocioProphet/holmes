@@ -1,0 +1,62 @@
+schemaVersion: repo-maturity.v1
+repository: SocioProphet/holmes
+plane: runtime
+status: active
+canonicality: canonical
+owners:
+  - SocioProphet
+maturity:
+  level: M2
+  targetLevel: M3
+  evidence:
+    - README.md defines Holmes purpose, product family, Slash Topics training role, proof-claim reasoning role, repo boundaries, and integration path.
+    - docs/ARCHITECTURE.md defines Holmes product components, service boundaries, TriTRPC method families, and promotion rules.
+    - docs/NLP_COMPONENT_ALIGNMENT.md defines governed NLP component coverage and Slash Topics topic-model training alignment.
+    - docs/PROOF_CLAIM_CONTRACT.md defines the Propose -> Explain -> Verify proof-claim contract and policy-admission boundary.
+    - examples/holmes-surface.json provides the machine-readable Holmes product surface fixture.
+    - examples/holmes-proof-claim-contract.json provides deterministic proof-claim reasoning fixture coverage.
+    - tools/validate_holmes.py validates Holmes surface and proof-claim contract fixtures.
+    - Makefile provides build, test, validate, dist, and release-dry-run targets.
+    - .github/workflows/validate.yml runs make validate and make release-dry-run on pull requests and main pushes.
+validation:
+  commands:
+    - make validate
+  ciRequired: true
+  lastKnownStatus: pending
+integrations:
+  - repository: SocioProphet/functional-model-surfaces
+    relationship: normative cross-surface standards and maturity model reference
+    required: true
+  - repository: SocioProphet/prophet-platform
+    relationship: runtime deployment and platform records after contracts stabilize
+    required: true
+  - repository: SocioProphet/sherlock-search
+    relationship: discovery, retrieval, evidence search, and investigation input surface
+    required: true
+  - repository: SocioProphet/slash-topics
+    relationship: governed topic-pack semantics and topic-model training consumer
+    required: true
+  - repository: SociOS-Linux/nlplab
+    relationship: Linux-native NLP lab execution and benchmark receipts
+    required: true
+  - repository: SourceOS-Linux/sourceos-model-carry
+    relationship: SourceOS client references and signed service carry refs
+    required: true
+  - repository: SocioProphet/ontogenesis
+    relationship: canonical semantic contracts for claims, traces, truth bounds, and contradiction artifacts
+    required: true
+  - repository: SocioProphet/policy-fabric
+    relationship: downstream policy admission for Holmes evidence and proof artifacts
+    required: true
+  - repository: SocioProphet/agentplane
+    relationship: governed execution after policy outcomes are decided
+    required: true
+  - repository: SocioProphet/sociosphere
+    relationship: workspace governance and maturity ingestion
+    required: false
+nextActions:
+  - Add negative fixtures and a negative-fixture runner so Holmes can honestly claim M3.
+  - Replace deterministic not-yet-wired CLI stubs with service-backed Sherlock, graph, and governance adapters.
+  - Add schema files for Holmes surface, proof-claim contract, and Slash Topics training references.
+  - Add release notes, checksums, and provenance attestations for M4 readiness.
+  - Register Holmes in workspace-inventory or Sociosphere scorecard ingestion.
