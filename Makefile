@@ -1,4 +1,4 @@
-.PHONY: build test validate validate-maturity dist release-dry-run clean
+.PHONY: build test validate validate-contracts validate-maturity validate-negative-fixtures dist release-dry-run clean
 
 BIN := holmes
 DIST_DIR := dist
@@ -20,8 +20,13 @@ test:
 validate-maturity:
 	python3 tools/validate_maturity.py
 
-validate: build validate-maturity
+validate-contracts:
 	python3 tools/validate_holmes.py
+
+validate-negative-fixtures:
+	python3 tools/run_negative_fixtures.py
+
+validate: build validate-maturity validate-contracts validate-negative-fixtures
 	bin/$(BIN) --version
 	bin/$(BIN) doctor
 	bin/$(BIN) self-test
