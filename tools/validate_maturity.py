@@ -64,7 +64,7 @@ def fail(message: str) -> int:
 
 
 def scalar(text: str, key: str) -> str | None:
-    match = re.search(rf"^{re.escape(key)}:\s*(.+?)\s*$", text, flags=re.MULTILINE)
+    match = re.search(rf"^\s*{re.escape(key)}:\s*(.+?)\s*$", text, flags=re.MULTILINE)
     if not match:
         return None
     return match.group(1).strip().strip('"')
