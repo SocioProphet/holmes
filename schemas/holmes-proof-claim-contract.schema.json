@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.socioprophet.dev/holmes/holmes-proof-claim-contract.v1.schema.json",
+  "title": "HolmesReasoningContract",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {
+      "const": "holmes.socioprophet.dev/v1"
+    },
+    "kind": {
+      "const": "HolmesReasoningContract"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "spec": {
+      "type": "object",
+      "required": [
+        "canonicalLoop",
+        "holmesOwnedSegment",
+        "admissionInvariant",
+        "candidateOnlyStatus",
+        "policyDecisions",
+        "contractMappings",
+        "workedExamples"
+      ],
+      "properties": {
+        "canonicalLoop": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "holmesOwnedSegment": {"type": "array", "items": {"type": "string"}, "minItems": 3},
+        "admissionInvariant": {"type": "string"},
+        "candidateOnlyStatus": {"const": "candidate_only"},
+        "policyDecisions": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "contractMappings": {"type": "object", "additionalProperties": {"type": "string"}},
+        "workedExamples": {"type": "object"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

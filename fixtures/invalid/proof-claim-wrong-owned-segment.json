@@ -1,0 +1,40 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "HolmesReasoningContract",
+  "metadata": {
+    "name": "bad-proof-claim-wrong-segment",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "canonicalLoop": ["Observe", "Anchor", "Normalize", "Propose", "Explain", "Verify", "Govern", "Act", "Receipt", "Learn"],
+    "holmesOwnedSegment": ["Propose", "Verify", "Explain"],
+    "admissionInvariant": "VectorCandidate | ModelOutput | GraphCandidate -> ProposedClaim -> ExplanationTrace + ProofCertificate? + ContradictionReport",
+    "candidateOnlyStatus": "candidate_only",
+    "policyDecisions": ["allow", "deny", "require_review", "provisional"],
+    "contractMappings": {
+      "Claim": "ontogenesis.socioprophet.dev/v1/Claim",
+      "ProofCertificate": "ontogenesis.socioprophet.dev/v1/ProofCertificate",
+      "ExplanationTrace": "ontogenesis.socioprophet.dev/v1/ExplanationTrace",
+      "ContradictionReport": "ontogenesis.socioprophet.dev/v1/ContradictionReport",
+      "TruthBounds": "ontogenesis.socioprophet.dev/v1/TruthBounds"
+    },
+    "workedExamples": {
+      "documentSpanToPolicyReadyClaim": {
+        "reasoningTrace": [
+          {
+            "ruleName": "rule.bad",
+            "premises": ["p"],
+            "conclusion": "c",
+            "evidenceRefs": ["evidence://bad"],
+            "confidence": 0.5,
+            "truthBounds": {"lower": 0.1, "upper": 0.9, "method": "fixture"}
+          }
+        ]
+      },
+      "vectorCandidateVerificationPath": {
+        "candidateClaim": {"status": "candidate_only"},
+        "verificationPath": {"result": "rejected_before_policy"}
+      }
+    }
+  }
+}

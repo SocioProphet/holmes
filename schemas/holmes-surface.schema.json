@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.socioprophet.dev/holmes/holmes-surface.v1.schema.json",
+  "title": "HolmesSurface",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {
+      "const": "holmes.socioprophet.dev/v1"
+    },
+    "kind": {
+      "const": "HolmesSurface"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "spec": {
+      "type": "object",
+      "required": [
+        "product",
+        "components",
+        "componentFamilies",
+        "nlpTasks",
+        "methodFamilies",
+        "requiredPromotionEvidence",
+        "integrations"
+      ],
+      "properties": {
+        "product": {"const": "Holmes"},
+        "tagline": {"type": "string"},
+        "components": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "componentFamilies": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "nlpTasks": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "methodFamilies": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "requiredPromotionEvidence": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "integrations": {"type": "object", "additionalProperties": {"type": "string"}}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
