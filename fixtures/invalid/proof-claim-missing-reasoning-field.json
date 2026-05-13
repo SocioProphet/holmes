@@ -1,0 +1,39 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "HolmesReasoningContract",
+  "metadata": {
+    "name": "bad-proof-claim-missing-reasoning-field",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "canonicalLoop": ["Observe", "Anchor", "Normalize", "Propose", "Explain", "Verify", "Govern", "Act", "Receipt", "Learn"],
+    "holmesOwnedSegment": ["Propose", "Explain", "Verify"],
+    "admissionInvariant": "VectorCandidate | ModelOutput | GraphCandidate -> ProposedClaim -> ExplanationTrace + ProofCertificate? + ContradictionReport",
+    "candidateOnlyStatus": "candidate_only",
+    "policyDecisions": ["allow", "deny", "require_review", "provisional"],
+    "contractMappings": {
+      "Claim": "ontogenesis.socioprophet.dev/v1/Claim",
+      "ProofCertificate": "ontogenesis.socioprophet.dev/v1/ProofCertificate",
+      "ExplanationTrace": "ontogenesis.socioprophet.dev/v1/ExplanationTrace",
+      "ContradictionReport": "ontogenesis.socioprophet.dev/v1/ContradictionReport",
+      "TruthBounds": "ontogenesis.socioprophet.dev/v1/TruthBounds"
+    },
+    "workedExamples": {
+      "documentSpanToPolicyReadyClaim": {
+        "reasoningTrace": [
+          {
+            "ruleName": "rule.bad.missing_truth_bounds",
+            "premises": ["p"],
+            "conclusion": "c",
+            "evidenceRefs": ["evidence://bad"],
+            "confidence": 0.5
+          }
+        ]
+      },
+      "vectorCandidateVerificationPath": {
+        "candidateClaim": {"status": "candidate_only"},
+        "verificationPath": {"result": "rejected_before_policy"}
+      }
+    }
+  }
+}
