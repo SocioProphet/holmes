@@ -1,4 +1,4 @@
-.PHONY: build test validate dist release-dry-run clean
+.PHONY: build test validate validate-maturity dist release-dry-run clean
 
 BIN := holmes
 DIST_DIR := dist
@@ -17,7 +17,10 @@ build:
 test:
 	go test ./...
 
-validate: build
+validate-maturity:
+	python3 tools/validate_maturity.py
+
+validate: build validate-maturity
 	python3 tools/validate_holmes.py
 	bin/$(BIN) --version
 	bin/$(BIN) doctor
