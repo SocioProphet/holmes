@@ -1,0 +1,23 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "HolmesSurface",
+  "metadata": {
+    "name": "bad-surface-missing-slash-topics",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "product": "Holmes",
+    "components": ["sherlock-search", "221b", "mycroft-router", "moriarty-bench", "irene-shield", "the-canon", "deduction-engine"],
+    "componentFamilies": ["basic-primitives", "advanced-primitives", "rule-techniques", "classical-ml", "neural-nlp", "transformers", "foundation-language-services", "retrieval-and-knowledge", "guardrails-and-governance", "agent-and-tool-orchestration"],
+    "nlpTasks": ["language-identification", "sentence-segmentation", "tokenization", "lemmatization", "part-of-speech-tagging", "morphological-features", "dependency-parsing", "semantic-role-labeling", "entity-extraction", "numeric-entity-extraction", "pii-extraction", "coreference-resolution", "relation-extraction", "text-classification", "zero-shot-classification", "sentiment-classification", "target-sentiment-extraction", "keyword-extraction", "category-classification", "concept-linking", "topic-modeling", "topic-model-training", "topic-taxonomy-induction", "topic-pack-generation", "topical-clustering", "text-similarity", "table-header-identification", "claim-extraction", "contradiction-detection", "semantic-graph-conversion", "evidence-governance"],
+    "methodFamilies": ["language.topic.v1/Propose", "language.topic.v1/Train"],
+    "requiredPromotionEvidence": ["corpusRef", "pipelineOrModelRef", "algorithmFamily", "taskContract", "evalRecord", "latencyFootprintRecord", "slashTopicsTrainingRef", "guardrailPolicy", "evidenceReceipt", "promotionRecord", "rollbackRef"],
+    "integrations": {
+      "standards": "SocioProphet/functional-model-surfaces",
+      "platform": "SocioProphet/prophet-platform",
+      "search": "SocioProphet/sherlock-search",
+      "lab": "SociOS-Linux/nlplab",
+      "sourceosCarry": "SourceOS-Linux/sourceos-model-carry"
+    }
+  }
+}
