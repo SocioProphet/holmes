@@ -27,7 +27,7 @@ validation:
   commands:
     - make validate
   ciRequired: true
-  lastKnownStatus: pending
+  lastKnownStatus: passing
 integrations:
   - repository: SocioProphet/functional-model-surfaces
     relationship: normative cross-surface standards and maturity model reference
@@ -60,7 +60,6 @@ integrations:
     relationship: workspace governance and maturity ingestion
     required: false
 nextActions:
-  - Confirm CI status and update validation.lastKnownStatus to passing after the M3 validation workflow is green.
   - Replace deterministic not-yet-wired CLI stubs with service-backed Sherlock, graph, and governance adapters.
   - Add release notes, checksums, SBOM, and provenance attestations for M4 readiness.
   - Register Holmes in workspace-inventory or Sociosphere scorecard ingestion.
