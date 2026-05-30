@@ -1,0 +1,24 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "WallGuardCleanRoomSynthesis",
+  "metadata": {
+    "name": "wallguard-clean-room-synthesis-cross-wall-rejected",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "synthesisId": "holmes-synthesis://cross-wall/invalid-001",
+    "sourceRetrievalRefs": ["sherlock-retrieval-filter://cross-wall-invalid-001"],
+    "sourceWallRefs": ["wall://client-a/matter-x", "wall://client-b/matter-y"],
+    "destinationRef": "workroom://client-a/matter-x",
+    "destinationWallRef": "wall://client-a/matter-x",
+    "wallDecisionRef": "wallguard-decision://cross-wall-synthesis-invalid-001",
+    "wallDecisionOutcome": "allow",
+    "synthesisDecision": "same_wall_synthesis",
+    "outputClassification": "firm_approved",
+    "sourceLabelPreserved": true,
+    "restrictedPayloadExcluded": false,
+    "residualRestrictions": [],
+    "receiptRefs": ["wallguard-receipt://cross-wall-synthesis-invalid-001"],
+    "evidenceRefs": ["SocioProphet/sherlock-search#61"]
+  }
+}
