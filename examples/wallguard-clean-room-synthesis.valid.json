@@ -1,0 +1,24 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "WallGuardCleanRoomSynthesis",
+  "metadata": {
+    "name": "wallguard-clean-room-synthesis-valid",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "synthesisId": "holmes-synthesis://client-a/matter-x/clean-room-001",
+    "sourceRetrievalRefs": ["sherlock-retrieval-filter://same-wall-pre-rank-001"],
+    "sourceWallRefs": ["wall://client-a/matter-x"],
+    "destinationRef": "workroom://client-a/matter-x",
+    "destinationWallRef": "wall://client-a/matter-x",
+    "wallDecisionRef": "wallguard-decision://same-wall-synthesis-allow-001",
+    "wallDecisionOutcome": "allow",
+    "synthesisDecision": "same_wall_synthesis",
+    "outputClassification": "wall_restricted",
+    "sourceLabelPreserved": true,
+    "restrictedPayloadExcluded": false,
+    "residualRestrictions": ["wall://client-a/matter-x"],
+    "receiptRefs": ["wallguard-receipt://same-wall-synthesis-allow-001"],
+    "evidenceRefs": ["SocioProphet/sherlock-search#61", "SocioProphet/memory-mesh#33"]
+  }
+}
