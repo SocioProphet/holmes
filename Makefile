@@ -1,4 +1,4 @@
-.PHONY: build test validate validate-contracts validate-maturity validate-negative-fixtures dist release-dry-run clean
+.PHONY: build test validate validate-contracts validate-maturity validate-negative-fixtures validate-wallguard-clean-room-synthesis dist release-dry-run clean
 
 BIN := holmes
 DIST_DIR := dist
@@ -22,6 +22,10 @@ validate-maturity:
 
 validate-contracts:
 	python3 tools/validate_holmes.py
+	python3 tools/validate_wallguard_clean_room_synthesis.py
+
+validate-wallguard-clean-room-synthesis:
+	python3 tools/validate_wallguard_clean_room_synthesis.py
 
 validate-negative-fixtures:
 	python3 tools/run_negative_fixtures.py
