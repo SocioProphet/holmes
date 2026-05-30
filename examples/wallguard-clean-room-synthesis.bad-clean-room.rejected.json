@@ -1,0 +1,24 @@
+{
+  "apiVersion": "holmes.socioprophet.dev/v1",
+  "kind": "WallGuardCleanRoomSynthesis",
+  "metadata": {
+    "name": "wallguard-clean-room-synthesis-bad-clean-room-rejected",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "synthesisId": "holmes-synthesis://clean-room/invalid-001",
+    "sourceRetrievalRefs": ["sherlock-retrieval-filter://same-wall-pre-rank-001"],
+    "sourceWallRefs": ["wall://client-a/matter-x"],
+    "destinationRef": "workroom://firm/approved-knowledge",
+    "destinationWallRef": "none",
+    "wallDecisionRef": "wallguard-decision://clean-room-invalid-001",
+    "wallDecisionOutcome": "clean_room_release_allowed",
+    "synthesisDecision": "clean_room_release",
+    "outputClassification": "firm_approved",
+    "sourceLabelPreserved": true,
+    "restrictedPayloadExcluded": false,
+    "residualRestrictions": [],
+    "receiptRefs": ["wallguard-receipt://clean-room-invalid-001"],
+    "evidenceRefs": ["SocioProphet/sherlock-search#61", "SocioProphet/guardrail-fabric#32"]
+  }
+}
