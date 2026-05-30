@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.socioprophet.org/holmes/wallguard-clean-room-synthesis.schema.json",
+  "title": "WallGuard Clean Room Synthesis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "apiVersion": {"const": "holmes.socioprophet.dev/v1"},
+    "kind": {"const": "WallGuardCleanRoomSynthesis"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1}
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "synthesisId",
+        "sourceRetrievalRefs",
+        "sourceWallRefs",
+        "destinationRef",
+        "destinationWallRef",
+        "wallDecisionRef",
+        "wallDecisionOutcome",
+        "synthesisDecision",
+        "outputClassification",
+        "sourceLabelPreserved",
+        "restrictedPayloadExcluded",
+        "residualRestrictions",
+        "receiptRefs",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "synthesisId": {"type": "string", "minLength": 1},
+        "sourceRetrievalRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "sourceWallRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "destinationRef": {"type": "string", "minLength": 1},
+        "destinationWallRef": {"type": "string", "minLength": 1},
+        "wallDecisionRef": {"type": "string", "minLength": 1},
+        "wallDecisionOutcome": {"enum": ["allow", "deny", "redact", "quarantine", "escalate", "clean_room_release_requested", "clean_room_release_allowed", "clean_room_release_denied"]},
+        "synthesisDecision": {"enum": ["same_wall_synthesis", "deny", "redact", "quarantine", "clean_room_release"]},
+        "outputClassification": {"enum": ["wall_restricted", "clean_room_derived", "firm_approved", "public_sanitized", "quarantined"]},
+        "sourceLabelPreserved": {"const": true},
+        "restrictedPayloadExcluded": {"type": "boolean"},
+        "residualRestrictions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "receiptRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "evidenceRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    }
+  }
+}
