@@ -326,7 +326,9 @@ func runServe() {
 			"sha256": hex.EncodeToString(sum[:]), "evidenceRef": "evidence://holmes/" + stableID(hex.EncodeToString(sum[:]))})
 	})
 	log.Printf("holmes serve on :%s → hellgraph %s", port, hellgraphBase())
-	if err := http.ListenAndServe("127.0.0.1:"+port, mux); err != nil {
+	// Bind all interfaces (":port"), not 127.0.0.1 — in a container the kubelet liveness/readiness
+	// probe hits the pod IP, so a loopback-only bind gets connection-refused → SIGKILL → CrashLoop.
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
 }
