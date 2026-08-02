@@ -16,8 +16,8 @@ maturity:
     - schemas/holmes-surface.schema.json defines the Holmes surface contract schema.
     - schemas/holmes-proof-claim-contract.schema.json defines the proof-claim reasoning contract schema.
     - examples/holmes-surface.json provides the positive Holmes product surface fixture.
-    - examples/holmes-proof-claim-contract.json provides deterministic positive proof-claim reasoning fixture coverage.
-    - fixtures/invalid/ contains 4 negative fixtures covering Holmes surface and proof-claim rejection paths.
+    - examples/holmes-proof-claim-contract.json provides deterministic positive proof-claim reasoning fixture coverage, including CHRONOS-carrier-compatible methodFamily, nonAuthorityDeclaration, and chronosCarrier fields.
+    - fixtures/invalid/ contains 5 negative fixtures covering Holmes surface, proof-claim rejection paths, and the forbidden LNN-style global-consistency promotion case.
     - tools/validate_holmes.py validates schema JSON, Holmes surface fixture semantics, and proof-claim contract fixture semantics.
     - tools/run_negative_fixtures.py confirms invalid fixtures are rejected by the same validation functions used for positive fixtures.
     - tools/validate_maturity.py validates this maturity manifest and required M3 evidence references.
@@ -63,3 +63,4 @@ nextActions:
   - Replace deterministic not-yet-wired CLI stubs with service-backed Sherlock, graph, and governance adapters.
   - Add release notes, checksums, SBOM, and provenance attestations for M4 readiness.
   - Register Holmes in workspace-inventory or Sociosphere scorecard ingestion.
+  - Extend ALLOWED_METHOD_FAMILIES as additional CHRONOS-aligned method families (e.g. NeurASP-style adjudication) are implemented in Holmes.

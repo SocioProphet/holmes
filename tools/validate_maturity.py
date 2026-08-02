@@ -107,9 +107,9 @@ def main() -> int:
         return fail(f"missing integrations: {missing_integrations}")
 
     invalid_fixtures = sorted((ROOT / "fixtures" / "invalid").glob("*.json"))
-    if len(invalid_fixtures) < 4:
-        return fail(f"fixtures/invalid must contain at least 4 negative fixtures; got {len(invalid_fixtures)}")
-    if "fixtures/invalid/ contains 4 negative fixtures" not in text:
+    if len(invalid_fixtures) < 5:
+        return fail(f"fixtures/invalid must contain at least 5 negative fixtures; got {len(invalid_fixtures)}")
+    if "fixtures/invalid/ contains 5 negative fixtures" not in text:
         return fail("maturity evidence must explicitly cite fixtures/invalid/ negative fixtures")
 
     evidence_count = count_list_items_in_section(text, "  evidence")
