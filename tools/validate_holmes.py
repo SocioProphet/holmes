@@ -138,6 +138,7 @@ REQUIRED_CHRONOS_CARRIER_FIELDS = {
     "methodOutputType",
     "groundingStatus",
     "validationStatus",
+    "explanationTraceRef",
     "owningAuthorityPlane",
     "replayRef",
     "governanceDecision",
@@ -251,7 +252,16 @@ def validate_method_family_and_non_authority(entry: dict, source: str, index: in
             f"of {sorted(ADMISSIBLE_CONSISTENCY_SCOPES)}; got {consistency_scope!r}"
         )
 
-    does_not_authorize = set(declaration.get("doesNotAuthorize", []))
+    does_not_authorize_raw = declaration.get("doesNotAuthorize")
+    if not isinstance(does_not_authorize_raw, list) or not all(
+        isinstance(item, str) for item in does_not_authorize_raw
+    ):
+        return fail(
+            f"{source}: reasoningTrace[{index}].nonAuthorityDeclaration.doesNotAuthorize must be a "
+            f"list of strings; got {does_not_authorize_raw!r}"
+        )
+
+    does_not_authorize = set(does_not_authorize_raw)
     missing_claims = REQUIRED_FORBIDDEN_CLAIMS - does_not_authorize
     if missing_claims:
         return fail(
@@ -284,10 +294,23 @@ def validate_chronos_carrier(carrier: object, source: str, worked_example_key: s
     if not str(carrier.get("sourceEvidenceRef", "")).strip():
         return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier.sourceEvidenceRef must be non-empty")
 
+    if not str(carrier.get("methodOutputType", "")).strip():
+        return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier.methodOutputType must be non-empty")
+
     if carrier.get("groundingStatus") not in ALLOWED_GROUNDING_STATUSES:
         return fail(
             f"{source}: workedExamples.{worked_example_key}.chronosCarrier.groundingStatus must be one of "
             f"{sorted(ALLOWED_GROUNDING_STATUSES)}; got {carrier.get('groundingStatus')!r}"
+        )
+
+    if not str(carrier.get("validationStatus", "")).strip():
+        return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier.validationStatus must be non-empty")
+
+    explanation_trace_ref = carrier.get("explanationTraceRef")
+    if explanation_trace_ref is not None and not str(explanation_trace_ref).strip():
+        return fail(
+            f"{source}: workedExamples.{worked_example_key}.chronosCarrier.explanationTraceRef must be "
+            "null (when no explanation trace was produced) or a non-empty string"
         )
 
     if carrier.get("owningAuthorityPlane") != REQUIRED_OWNING_AUTHORITY_PLANE:

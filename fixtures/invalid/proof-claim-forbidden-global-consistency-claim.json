@@ -41,6 +41,7 @@
           "methodOutputType": "bounded-truth-interval",
           "groundingStatus": "evidence_grounded",
           "validationStatus": "insufficient_for_admission",
+          "explanationTraceRef": null,
           "owningAuthorityPlane": "SocioProphet/policy-fabric",
           "replayRef": "replay://holmes/bad-fixture/v1",
           "governanceDecision": "pending_policy_decision"
@@ -54,6 +55,7 @@
           "methodOutputType": "bounded-truth-interval",
           "groundingStatus": "ungrounded",
           "validationStatus": "rejected_before_policy",
+          "explanationTraceRef": null,
           "owningAuthorityPlane": "SocioProphet/policy-fabric",
           "replayRef": "replay://holmes/bad-fixture-vector/v1",
           "governanceDecision": "rejected_before_policy"

@@ -54,9 +54,15 @@ declaration, replay reference, and a governance decision (or pending decision).
 
 This section is an **additive superset**: it extends the existing
 `TruthBounds`/`ReasoningTrace`/`ExplanationTrace` chain above with CHRONOS-carrier
-fields, without removing or changing any existing field or behavior. Every artifact
-this repo already produces remains valid; it is now also expressible as a CHRONOS
-carrier.
+fields, without removing or changing any existing field or behavior. The base
+proof-claim shape documented earlier in this file (`ReasoningTrace`,
+`ExplanationTrace`, `ProofCertificate`, `ContradictionReport`, `policyReadyClaim`)
+is unchanged and remains backward compatible. However, the validator now *requires*
+the CHRONOS-carrier fields introduced in this section —
+`reasoningTrace[].methodFamily`, `reasoningTrace[].nonAuthorityDeclaration`, and each
+worked example's `chronosCarrier` block — in order to pass. Artifacts produced
+before this alignment was added are not automatically CHRONOS-carrier-valid; they
+need those fields added before they will validate.
 
 Holmes's `TruthBounds`/`ReasoningTrace` mechanism is admissible under that doctrine's
 **"LNN-style truth-bound propagation"** method-family row:
