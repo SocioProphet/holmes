@@ -86,6 +86,16 @@
               "lower": 0.61,
               "upper": 0.82,
               "method": "calibrated_estimate"
+            },
+            "methodFamily": "LNN-style truth-bound propagation",
+            "nonAuthorityDeclaration": {
+              "consistencyScope": "formula_local",
+              "doesNotAuthorize": [
+                "global_consistency",
+                "arbitrary_entailment_correctness",
+                "learned_rule_structure"
+              ],
+              "statement": "This bounded truth-bound result is an advisory bound/inconsistency analysis over this single formula only. It reports formula-local inconsistency and interpretable formula structure; it does not authorize a global-consistency claim, an arbitrary-entailment-correctness claim, or promotion of learned rule structure. Policy Fabric, not Holmes, holds admission authority."
             }
           }
         ],
@@ -118,6 +128,16 @@
             "require_review",
             "provisional"
           ]
+        },
+        "chronosCarrier": {
+          "sourceEvidenceRef": "evidence://doc/platform-rfc/section-2",
+          "methodOutputType": "bounded-truth-interval",
+          "groundingStatus": "evidence_grounded",
+          "validationStatus": "insufficient_for_admission",
+          "explanationTraceRef": "exp-001",
+          "owningAuthorityPlane": "SocioProphet/policy-fabric",
+          "replayRef": "replay://holmes/claim-platform-kernel-hardening/v1",
+          "governanceDecision": "pending_policy_decision"
         }
       },
       "vectorCandidateVerificationPath": {
@@ -156,6 +176,16 @@
             ]
           },
           "result": "rejected_before_policy"
+        },
+        "chronosCarrier": {
+          "sourceEvidenceRef": "vec://sherlock/chunk/9001",
+          "methodOutputType": "bounded-truth-interval",
+          "groundingStatus": "ungrounded",
+          "validationStatus": "rejected_before_policy",
+          "explanationTraceRef": null,
+          "owningAuthorityPlane": "SocioProphet/policy-fabric",
+          "replayRef": "replay://holmes/claim-vector-kernel-hardening/v1",
+          "governanceDecision": "rejected_before_policy"
         }
       }
     }

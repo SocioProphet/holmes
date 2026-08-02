@@ -108,7 +108,43 @@ REQUIRED_REASONING_TRACE = {
     "evidenceRefs",
     "confidence",
     "truthBounds",
+    "methodFamily",
+    "nonAuthorityDeclaration",
 }
+
+# CHRONOS carrier alignment (sociosphere/docs/integration/neurosymbolic-chronos-alignment.md
+# "Method families and CHRONOS roles" table + "Neuro-symbolic carrier boundary" section).
+# Holmes's TruthBounds/ReasoningTrace mechanism is admissible under that doctrine's
+# "LNN-style truth-bound propagation" row:
+#   admissible use: report lower/upper truth bounds, formula-local inconsistency,
+#                   interpretable formula structure
+#   forbidden use:  claim global consistency, arbitrary entailment correctness,
+#                   or learned rule structure
+# This validator enforces that discipline as data, not just prose in PROOF_CLAIM_CONTRACT.md.
+ALLOWED_METHOD_FAMILIES = {"LNN-style truth-bound propagation"}
+REQUIRED_NON_AUTHORITY_FIELDS = {"consistencyScope", "doesNotAuthorize", "statement"}
+# The forbidden-use claims a bounded local result must never be promoted to assert.
+REQUIRED_FORBIDDEN_CLAIMS = {"global_consistency", "arbitrary_entailment_correctness"}
+FORBIDDEN_CONSISTENCY_SCOPE = "global"
+ADMISSIBLE_CONSISTENCY_SCOPES = {"formula_local"}
+
+# Package-level CHRONOS carrier fields: the object crossing the governance boundary
+# (Holmes -> Policy Fabric) must carry these alongside what the package already carries
+# under existing Holmes vocabulary (e.g. evidenceRefs, explanationTrace.traceId,
+# proofCertificate.verificationStatus / verificationPath.result, policyReadyClaim.admissionStatus)
+# -- those are cross-referenced from chronosCarrier, not duplicated as new data.
+REQUIRED_CHRONOS_CARRIER_FIELDS = {
+    "sourceEvidenceRef",
+    "methodOutputType",
+    "groundingStatus",
+    "validationStatus",
+    "explanationTraceRef",
+    "owningAuthorityPlane",
+    "replayRef",
+    "governanceDecision",
+}
+ALLOWED_GROUNDING_STATUSES = {"evidence_grounded", "ungrounded"}
+REQUIRED_OWNING_AUTHORITY_PLANE = "SocioProphet/policy-fabric"
 
 
 def fail(message: str) -> int:
@@ -177,6 +213,121 @@ def validate_surface(path: Path = EXAMPLE) -> int | None:
     return validate_surface_data(data, str(path.relative_to(ROOT)))
 
 
+def validate_method_family_and_non_authority(entry: dict, source: str, index: int) -> int | None:
+    """Enforce the LNN-style truth-bound propagation method-family tag and the
+    non-authority declaration that a bounded local result must carry. This is the
+    concrete, checkable form of the doctrine's forbidden-use column: a bounded
+    truth-bound result must never be tagged as authorizing a global-consistency
+    or arbitrary-entailment-correctness claim.
+    """
+    method_family = entry.get("methodFamily")
+    if method_family not in ALLOWED_METHOD_FAMILIES:
+        return fail(
+            f"{source}: reasoningTrace[{index}].methodFamily must be one of "
+            f"{sorted(ALLOWED_METHOD_FAMILIES)}; got {method_family!r}"
+        )
+
+    declaration = entry.get("nonAuthorityDeclaration")
+    if not isinstance(declaration, dict):
+        return fail(f"{source}: reasoningTrace[{index}].nonAuthorityDeclaration must be an object")
+
+    missing_fields = REQUIRED_NON_AUTHORITY_FIELDS - set(declaration.keys())
+    if missing_fields:
+        return fail(
+            f"{source}: reasoningTrace[{index}].nonAuthorityDeclaration missing fields: "
+            f"{sorted(missing_fields)}"
+        )
+
+    consistency_scope = declaration.get("consistencyScope")
+    if consistency_scope == FORBIDDEN_CONSISTENCY_SCOPE:
+        return fail(
+            f"{source}: reasoningTrace[{index}].nonAuthorityDeclaration.consistencyScope is "
+            f"'{FORBIDDEN_CONSISTENCY_SCOPE}' — a {ALLOWED_METHOD_FAMILIES!r} result is forbidden "
+            "from claiming global consistency; it is advisory bound/inconsistency analysis over a "
+            "single formula only (consistencyScope must be 'formula_local')"
+        )
+    if consistency_scope not in ADMISSIBLE_CONSISTENCY_SCOPES:
+        return fail(
+            f"{source}: reasoningTrace[{index}].nonAuthorityDeclaration.consistencyScope must be one "
+            f"of {sorted(ADMISSIBLE_CONSISTENCY_SCOPES)}; got {consistency_scope!r}"
+        )
+
+    does_not_authorize_raw = declaration.get("doesNotAuthorize")
+    if not isinstance(does_not_authorize_raw, list) or not all(
+        isinstance(item, str) for item in does_not_authorize_raw
+    ):
+        return fail(
+            f"{source}: reasoningTrace[{index}].nonAuthorityDeclaration.doesNotAuthorize must be a "
+            f"list of strings; got {does_not_authorize_raw!r}"
+        )
+
+    does_not_authorize = set(does_not_authorize_raw)
+    missing_claims = REQUIRED_FORBIDDEN_CLAIMS - does_not_authorize
+    if missing_claims:
+        return fail(
+            f"{source}: reasoningTrace[{index}].nonAuthorityDeclaration.doesNotAuthorize must "
+            f"include {sorted(missing_claims)}"
+        )
+
+    if not str(declaration.get("statement", "")).strip():
+        return fail(f"{source}: reasoningTrace[{index}].nonAuthorityDeclaration.statement must be non-empty")
+
+    return None
+
+
+def validate_chronos_carrier(carrier: object, source: str, worked_example_key: str) -> int | None:
+    """Validate the package-level CHRONOS carrier block on a worked example — the
+    object that crosses the Holmes -> Policy Fabric governance boundary. See
+    sociosphere/docs/integration/neurosymbolic-chronos-alignment.md, "Neuro-symbolic
+    carrier boundary".
+    """
+    if not isinstance(carrier, dict):
+        return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier must be an object")
+
+    missing_fields = REQUIRED_CHRONOS_CARRIER_FIELDS - set(carrier.keys())
+    if missing_fields:
+        return fail(
+            f"{source}: workedExamples.{worked_example_key}.chronosCarrier missing fields: "
+            f"{sorted(missing_fields)}"
+        )
+
+    if not str(carrier.get("sourceEvidenceRef", "")).strip():
+        return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier.sourceEvidenceRef must be non-empty")
+
+    if not str(carrier.get("methodOutputType", "")).strip():
+        return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier.methodOutputType must be non-empty")
+
+    if carrier.get("groundingStatus") not in ALLOWED_GROUNDING_STATUSES:
+        return fail(
+            f"{source}: workedExamples.{worked_example_key}.chronosCarrier.groundingStatus must be one of "
+            f"{sorted(ALLOWED_GROUNDING_STATUSES)}; got {carrier.get('groundingStatus')!r}"
+        )
+
+    if not str(carrier.get("validationStatus", "")).strip():
+        return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier.validationStatus must be non-empty")
+
+    explanation_trace_ref = carrier.get("explanationTraceRef")
+    if explanation_trace_ref is not None and not str(explanation_trace_ref).strip():
+        return fail(
+            f"{source}: workedExamples.{worked_example_key}.chronosCarrier.explanationTraceRef must be "
+            "null (when no explanation trace was produced) or a non-empty string"
+        )
+
+    if carrier.get("owningAuthorityPlane") != REQUIRED_OWNING_AUTHORITY_PLANE:
+        return fail(
+            f"{source}: workedExamples.{worked_example_key}.chronosCarrier.owningAuthorityPlane must be "
+            f"{REQUIRED_OWNING_AUTHORITY_PLANE!r}; Holmes never declares itself the owning authority plane"
+        )
+
+    if not str(carrier.get("replayRef", "")).strip():
+        return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier.replayRef must be non-empty")
+
+    if not str(carrier.get("governanceDecision", "")).strip():
+        return fail(f"{source}: workedExamples.{worked_example_key}.chronosCarrier.governanceDecision must be non-empty")
+
+    return None
+
+
 def validate_reasoning_contract_data(reasoning: dict, source: str = "HolmesReasoningContract") -> int | None:
     if reasoning.get("apiVersion") != "holmes.socioprophet.dev/v1":
         return fail(f"{source}: wrong reasoning contract apiVersion")
@@ -212,11 +363,24 @@ def validate_reasoning_contract_data(reasoning: dict, source: str = "HolmesReaso
             return fail(
                 f"{source}: missing reasoningTrace fields at index {index}: {sorted(missing_reasoning_fields)}"
             )
+        result = validate_method_family_and_non_authority(entry, source, index)
+        if result is not None:
+            return result
+    doc_carrier_result = validate_chronos_carrier(
+        doc_example.get("chronosCarrier"), source, "documentSpanToPolicyReadyClaim"
+    )
+    if doc_carrier_result is not None:
+        return doc_carrier_result
     vector_example = worked_examples["vectorCandidateVerificationPath"]
     if vector_example.get("candidateClaim", {}).get("status") != "candidate_only":
         return fail(f"{source}: vector candidateClaim status must be candidate_only")
     if vector_example.get("verificationPath", {}).get("result") != REJECTED_BEFORE_POLICY:
         return fail(f"{source}: vector verification path result must be rejected_before_policy")
+    vector_carrier_result = validate_chronos_carrier(
+        vector_example.get("chronosCarrier"), source, "vectorCandidateVerificationPath"
+    )
+    if vector_carrier_result is not None:
+        return vector_carrier_result
     return None
 
 
