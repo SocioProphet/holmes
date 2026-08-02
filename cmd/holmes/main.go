@@ -26,6 +26,15 @@ func hellgraphBase() string {
 	return "http://127.0.0.1:8090"
 }
 
+// hellgraphWired reports whether a HellGraph backend has been explicitly configured via
+// HOLMES_HELLGRAPH. This is the single source of truth for hellgraph-backed integrations'
+// wiring status: `doctor` reports it, and `search`/`verify` consult it before attempting a
+// live call, so the CLI never contradicts its own declared maturity state. An unset env var
+// means "no backend configured" — not "assume localhost is there and find out the hard way".
+func hellgraphWired() bool {
+	return os.Getenv("HOLMES_HELLGRAPH") != ""
+}
+
 var httpClient = &http.Client{Timeout: 12 * time.Second}
 
 // searchGraph runs a real GraphRAG retrieval against HellGraph and returns the grounding + a count of
@@ -224,13 +233,37 @@ func requireArgs(args []string, n int) {
 	}
 }
 
+// hellgraphComponents are the declared components backed by the HellGraph HTTP integration
+// (search's "sherlock-search" engine and verify's "deduction-engine"). Their wired/pending
+// status tracks hellgraphWired() — everything else in this CLI skeleton has no implementation
+// at all yet, regardless of env config, so it always reports pending.
+var hellgraphComponents = map[string]bool{"sherlock-search": true, "deduction-engine": true}
+
 func runDoctor() {
-	details := map[string]any{
-		"components": []string{"sherlock-search", "221b", "mycroft-router", "moriarty-bench", "irene-shield", "the-canon", "deduction-engine"},
-		"wired":      []string{},
-		"pending":    []string{"sherlock-search", "221b", "mycroft-router", "moriarty-bench", "irene-shield", "the-canon", "deduction-engine"},
+	allComponents := []string{"sherlock-search", "221b", "mycroft-router", "moriarty-bench", "irene-shield", "the-canon", "deduction-engine"}
+	wired := []string{}
+	pending := []string{}
+	for _, c := range allComponents {
+		if hellgraphComponents[c] && hellgraphWired() {
+			wired = append(wired, c)
+		} else {
+			pending = append(pending, c)
+		}
 	}
-	runEvidence("doctor", "not-yet-wired", details)
+
+	status := "not-yet-wired"
+	switch {
+	case len(pending) == 0:
+		status = "wired"
+	case len(wired) > 0:
+		status = "partially-wired"
+	}
+
+	runEvidence("doctor", status, map[string]any{
+		"components": allComponents,
+		"wired":      wired,
+		"pending":    pending,
+	})
 }
 
 func runSelfTest() {
@@ -251,6 +284,17 @@ func runAnalyze(path string) {
 }
 
 func runSearch(query string) {
+	if !hellgraphWired() {
+		// Honest, expected state — matches `holmes doctor`'s own declared wiring status.
+		// Exit 0: this is documented behavior, not a failure of the search command.
+		printJSON(map[string]any{
+			"tool": "holmes", "version": version, "status": "not-yet-wired", "query": query,
+			"engine":     "sherlock-search→hellgraph",
+			"message":    "hellgraph backend is not configured (set HOLMES_HELLGRAPH to a live endpoint to enable search); see `holmes doctor`.",
+			"evidenceId": stableID("search:" + query),
+		})
+		return
+	}
 	g, n, err := searchGraph(query)
 	if err != nil {
 		printJSON(map[string]any{"tool": "holmes", "version": version, "status": "error", "query": query, "engine": "sherlock-search→hellgraph", "error": err.Error()})
@@ -286,6 +330,11 @@ func runServe() {
 			return
 		}
 		q := r.URL.Query().Get("q")
+		if !hellgraphWired() {
+			json.NewEncoder(w).Encode(map[string]any{"status": "not-yet-wired", "query": q, "engine": "sherlock-search→hellgraph",
+				"message": "hellgraph backend is not configured (set HOLMES_HELLGRAPH); see /healthz or `holmes doctor`."})
+			return
+		}
 		g, n, err := searchGraph(q)
 		if err != nil {
 			w.WriteHeader(502)
@@ -297,6 +346,11 @@ func runServe() {
 	mux.HandleFunc("/verify", func(w http.ResponseWriter, r *http.Request) {
 		cors(w)
 		if r.Method == http.MethodOptions {
+			return
+		}
+		if !hellgraphWired() {
+			json.NewEncoder(w).Encode(map[string]any{"status": "not-yet-wired", "engine": "deduction-engine",
+				"message": "hellgraph backend is not configured (set HOLMES_HELLGRAPH); see /healthz or `holmes doctor`."})
 			return
 		}
 		var req struct {
